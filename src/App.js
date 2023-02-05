@@ -46,7 +46,8 @@ function App() {
 
       //POST請求
       axios.post(`${cors}${api_action}`, fData, {headers: headers})
-        .then(response => alert(response.data))
+        //.then(response => alert(response.data))
+        .then(response => (console.log(response.data)))
         .catch(error => alert(error));
     }
   }
