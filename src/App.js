@@ -24,7 +24,7 @@ function App() {
       alert("Email has left blank");
     } else {
 
-      const cors = "https://6db3-182-235-153-136.jp.ngrok.io/projects/member/register.php";
+      const cors = "https://6db3-182-235-153-136.jp.ngrok.io/projects";
       const api_action = "/member/register.php";
       let fData = {
         'antion':"login",
@@ -65,7 +65,7 @@ function App() {
       alert("Email has left blank");
     } else {
 
-      const cors = "https://6db3-182-235-153-136.jp.ngrok.io/projects/member/register.php";
+      const cors = "https://6db3-182-235-153-136.jp.ngrok.io/projects";
       const api_action = "/member/register.php";
       let fData = {
         'antion':"signup",
