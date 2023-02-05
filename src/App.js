@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import * as Components from './Components';
 import axios from 'axios';
+import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 
-var emailreg = /^([a-zA-Z]|[0-9])(\w)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
-var pattern = new RegExp("[\u4E00-\u9FA5]+"); //判斷是否為中文
+import { Form, Input } from 'antd';
+
+var emailreg = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+//var pattern = new RegExp("[\u4E00-\u9FA5]+"); //判斷是否為中文
 
 function App() {
   
@@ -12,12 +15,65 @@ function App() {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
  
+  const checkPasswordStrength = (password) => {
+    let strength = 0;
+    if (password.length < 6) {
+      return 'weak';
+    }
+    if (password.match(/[a-z]+/)) {
+      strength += 1;
+    }
+    if (password.match(/[A-Z]+/)) {
+      strength += 1;
+    }
+    if (password.match(/[0-9]+/)) {
+      strength += 1;
+    }
+    if (password.match(/[$@#&!]+/)) {
+      strength += 1;
+    }
+    switch (strength) {
+      case 1:
+        return 'weak';
+      case 2:
+        return 'fair';
+      case 3:
+        return 'strong';
+      case 4:
+        return 'very strong';
+      default:
+        return 'weak';
+    }
+  };
+  const PasswordStrengthCheck = (rule, value) => {
+    if (!value) {
+      return Promise.reject('Please input your password!');
+    }
+  
+    // your custom password strength check logic
+    const passwordStrength = checkPasswordStrength(value);
+    if (passwordStrength === 'weak') {
+      return Promise.reject('Password is too weak');
+    }
+
+    if (passwordStrength === 'fair') {
+      return Promise.reject('Password is too fair');
+    }
+    if (passwordStrength === 'strong') {
+      return Promise.reject('Password is strong');
+    }
+    if (passwordStrength === 'very strong') {
+      return Promise.reject('Password is very strong');
+    }
+  
+    return Promise.resolve();
+  };
+  
   //Sign in
   const handlesSubmit = (e) => { //alert() 用來跳出提示 (警告) 對話視窗。
-    e.preventDefault();
-    //var emailreg = /^([a-zA-Z]|[0-9])(\w)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
+    e.preventDefault();//阻止表單提交
 
-    if (password.length === 0) {
+    if (!password) {
       alert("password has left blank");
     }else if(!emailreg.test(email)){
       alert("Email Format Error");
@@ -25,22 +81,13 @@ function App() {
       alert("Email has left blank");
     } else {
 
-      const cors = "https://7099-182-235-153-136.jp.ngrok.io/projects";
+      const cors = "https://339b-182-235-153-136.jp.ngrok.io/projects";
       const api_action = "/member/register.php";
       let fData = {
         'antion':"login",
         'email':email,
         'password':password,
       }
-
-      //fData.append('name', name);
-      //fData.append('password', password);
-      //fData.append('email', email);
-
-      //GET請求
-      /*axios.get('')
-      .then( (response) => console.log(response))
-      .catch( (error) => console.log(error))*/
 
       //POST請求
       axios.post(`${cors}${api_action}`, fData)
@@ -54,16 +101,11 @@ function App() {
   }
 
   //Sign up
-  const handlesSignup = () => { //alert() 用來跳出提示 (警告) 對話視窗。
+  const handlesSignup = (e) => { //alert() 用來跳出提示 (警告) 對話視窗。
+    e.preventDefault();//阻止表單提交
 
-    //var emailreg = /^([a-zA-Z]|[0-9])(\w)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
-
-    if (password.length === 0) {
+    if (!password) {
       alert("password has left blank");
-    }else if(password.length < 8){
-      alert("Minimum password length is 8 ");
-    }else if(pattern.test(password)){
-      alert("Password is incorrect ");
     }else if(!emailreg.test(email)){
       alert("Email Format Error");
     }else if (email.length === 0) {
@@ -86,38 +128,107 @@ function App() {
     }
   }
 
-  const cbshow = () => {
-    var x = document.getElementById("cbpassword");
-    if(x.type === "password"){
-      x.type = "text";
-    }else{
-      x.type = "password";
-    }
-  }
-
     return (
       <Components.Container>
         <Components.SignUpContainer signinIn={signIn}>
           <Components.Form>
-            <Components.Title>Create Account</Components.Title>
-            <Components.Input type='text' placeholder='Name' value={text} onChange={(e) => setName(e.target.value)}/>
-            <Components.Input type='email' placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)}/>
-            <Components.Input type='password' placeholder='Password'  value={password} onChange={(e) => setPassword(e.target.value)}/>
-            <Components.Button value="SEND" onClick={handlesSignup}>Sign Up</Components.Button>
+            <Form name="basic"
+              labelCol={{ span: 8 }}
+              wrapperCol={{ span: 100 }}
+              style={{ maxWidth: 600 }}
+              initialValues={{ remember: true }}
+              autoComplete="off">
+
+              <Components.Title>Create Account</Components.Title>
+              <Form.Item
+                name="username"
+                rules={[{ required: true, message: 'Please input your username!' }]}
+              >
+              <Input type='text' placeholder='UserName' value={text} onChange={(e) => setName(e.target.value)}/>
+              </Form.Item>
+
+              <Form.Item
+                name="email"
+                rules={[
+                  {
+                    type: 'email',
+                    message: 'The input is not valid E-mail!',
+                  },
+                  {
+                    required: true,
+                    message: 'Please input your E-mail!',
+                  },
+                ]}
+              >
+              <Input type='email' placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)}/>
+              </Form.Item>
+
+              <Form.Item
+              name="password"
+              rules={[{
+                validator: PasswordStrengthCheck,
+              }]}
+              >
+              <Input.Password type='password' value={password} onChange={(e) => setPassword(e.target.value)}
+                placeholder="password"
+                iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+              />
+              </Form.Item>
+              <Form.Item
+                  name="confirm Password"
+                  dependencies={['password']}
+                  hasFeedback
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Please confirm your password!',
+                    },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (!value || getFieldValue('password') === value) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(new Error("The passwords that you entered don't match!"));
+                      },
+                    }),
+                  ]}
+                >
+              <Input.Password placeholder="confirm Password"/>
+              </Form.Item>
+
+              <Components.Button value="SEND" onClick={handlesSignup}>Sign Up</Components.Button>
+            </Form>
           </Components.Form>
         </Components.SignUpContainer>
 
         <Components.SignInContainer signinIn={signIn}>
           <Components.Form>
-            <Components.Title>Sign in</Components.Title>
-            <Components.Input type='email' placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)} />
-            <Components.Input type='password' id="cbpassword" placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} />
-            <Components.Checkboxdiv>
-            <Components.CheckboxInput type='checkbox' onClick={cbshow}/>
-            <Components.Checkboxlabel>show password !</Components.Checkboxlabel>
-            </Components.Checkboxdiv>
+          <Form name="basic"
+              labelCol={{ span: 8 }}
+              wrapperCol={{ span: 100 }}
+              style={{ maxWidth: 600 }}
+              initialValues={{ remember: true }}
+              autoComplete="off">
+              <Components.Title>Sign in</Components.Title>
+              <Form.Item
+                name="email"
+                rules={[{ required: true, message: 'Please input your  E-mail!' }]}
+              >
+              <Input type='email' placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)}/>
+              </Form.Item>
+
+              <Form.Item
+              name="password"
+              rules={[{ required: true, message: 'Please input your password!' }]}
+              >
+              <Input.Password type='password' value={password} onChange={(e) => setPassword(e.target.value)}
+                placeholder="password"
+                iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+              />
+              </Form.Item>
             <Components.Anchor href='#'>Forgot your password?</Components.Anchor>
             <Components.Button value="SEND" onClick={handlesSubmit} >Sigin In</Components.Button>
+            </Form>
           </Components.Form>
         </Components.SignInContainer>
 
