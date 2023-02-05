@@ -6,13 +6,15 @@ var emailreg = /^([a-zA-Z]|[0-9])(\w)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
 var pattern = new RegExp("[\u4E00-\u9FA5]+"); //判斷是否為中文
 
 function App() {
+  
   const [signIn, toggle] = React.useState(true);
   const [text, setName] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
  
   //Sign in
-  const handlesSubmit = () => { //alert() 用來跳出提示 (警告) 對話視窗。
+  const handlesSubmit = (event) => { //alert() 用來跳出提示 (警告) 對話視窗。
+    event.preventDefault();
 
     //var emailreg = /^([a-zA-Z]|[0-9])(\w)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
 
@@ -24,16 +26,13 @@ function App() {
       alert("Email has left blank");
     } else {
 
-      const cors = "https://6db3-182-235-153-136.jp.ngrok.io/projects";
+      const cors = "https://7099-182-235-153-136.jp.ngrok.io/projects";
       const api_action = "/member/register.php";
       let fData = {
         'antion':"login",
         'email':email,
         'password':password,
       }
-      const headers = {
-        "Content-Type": "text/json"
-      };
 
       //fData.append('name', name);
       //fData.append('password', password);
@@ -45,10 +44,13 @@ function App() {
       .catch( (error) => console.log(error))*/
 
       //POST請求
-      axios.post(`${cors}${api_action}`, fData, {headers: headers})
-        //.then(response => alert(response.data))
-        .then(response => (console.log(response)))
-        .catch(error => alert(error));
+      axios.post(`${cors}${api_action}`, fData)
+      .then(function (response) {
+        console.log(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
     }
   }
 
@@ -69,7 +71,7 @@ function App() {
       alert("Email has left blank");
     } else {
 
-      const cors = "https://6db3-182-235-153-136.jp.ngrok.io/projects";
+      const cors = "/projects";
       const api_action = "/member/register.php";
       let fData = {
         'antion':"signup",
@@ -80,8 +82,8 @@ function App() {
 
       //POST請求
       axios.post(`${cors}${api_action}`, fData)
-        .then(response => alert(response.data))
-        .catch(error => alert(error));
+      .then(response => alert(response.data))
+      .catch(error => alert(error));
     }
   }
 
@@ -116,7 +118,7 @@ function App() {
             <Components.Checkboxlabel>show password !</Components.Checkboxlabel>
             </Components.Checkboxdiv>
             <Components.Anchor href='#'>Forgot your password?</Components.Anchor>
-            <Components.Button value="SEND" onClick={handlesSubmit}>Sigin In</Components.Button>
+            <Components.Button value="SEND" onClick={handlesSubmit} >Sigin In</Components.Button>
           </Components.Form>
         </Components.SignInContainer>
 
