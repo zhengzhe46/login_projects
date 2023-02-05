@@ -31,6 +31,9 @@ function App() {
         'email':email,
         'password':password,
       }
+      const headers = {
+        "Content-Type": "text/json"
+      };
 
       //fData.append('name', name);
       //fData.append('password', password);
@@ -42,7 +45,7 @@ function App() {
       .catch( (error) => console.log(error))*/
 
       //POST請求
-      axios.post(`${cors}${api_action}`, fData)
+      axios.post(`${cors}${api_action}`, fData, {headers: headers})
         .then(response => alert(response.data))
         .catch(error => alert(error));
     }
