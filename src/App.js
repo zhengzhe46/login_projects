@@ -13,9 +13,8 @@ function App() {
   const [email, setEmail] = useState('');
  
   //Sign in
-  const handlesSubmit = (event) => { //alert() 用來跳出提示 (警告) 對話視窗。
-    event.preventDefault();
-
+  const handlesSubmit = (e) => { //alert() 用來跳出提示 (警告) 對話視窗。
+    e.preventDefault();
     //var emailreg = /^([a-zA-Z]|[0-9])(\w)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
 
     if (password.length === 0) {
